@@ -1,244 +1,170 @@
-# 🚗 Previsão de Preços de Carros com Redes Neurais
+# 🚗 Previsão Inteligente de Preços de Veículos com Redes Neurais & Machine Learning
 
-Este projeto implementa uma solução completa de **Machine Learning** usando **Redes Neurais** para prever preços de carros usados. O sistema inclui análise exploratória, pré-processamento avançado, treinamento otimizado e visualizações detalhadas.
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.3+-orange.svg)](https://scikit-learn.org/)
+[![Streamlit App](https://img.shields.io/badge/streamlit-1.28+-red.svg)](https://streamlit.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-## 🎯 Características Principais
+Solução completa e profissional de **Machine Learning e Redes Neurais** para avaliação e precificação automatizada de veículos usados. O projeto foi construído sob rigorosos padrões de **Engenharia de Machine Learning e MLOps**: eliminação total de vazamento de dados (*Data Leakage*), engenharia de atributos com regras de negócio, transformação logarítmica da variável target e um **aplicativo web interativo em Streamlit**.
 
-- ✅ **Análise exploratória automática** dos dados
-- ✅ **Pré-processamento inteligente** com tratamento de outliers
-- ✅ **Arquiteturas de rede neural flexíveis** (simples, média, profunda)
-- ✅ **Callbacks avançados** para otimização do treinamento
-- ✅ **Métricas de avaliação completas** (MAE, MSE, RMSE, R², MAPE)
-- ✅ **6 visualizações diferentes** para análise de performance
-- ✅ **Importância das features** por análise de permutação
-- ✅ **Interface orientada a objetos** para fácil reutilização
+---
 
-## 📊 Dataset
+## 🎯 Destaques do Projeto
 
-O projeto foi desenvolvido para trabalhar com o dataset de carros usados que contém informações como:
+- ✅ **Arquitetura Modular:** Código desacoplado em módulos de dados, features e pipelines (`src/`).
+- ✅ **Zero Data Leakage:** Pré-processamento, imputação e encoders integrados via `ColumnTransformer` do Scikit-Learn ajustados exclusivamente no conjunto de treino.
+- ✅ **Engenharia de Features Especializada:** Criação de variáveis de alto impacto como intensidade de uso (`km_per_year`), idade do veículo, flag explícita de avaria (`is_damaged`) e segmentação de marcas de luxo (`is_premium`).
+- ✅ **Target Logarítmica:** Treinamento em escala $\log(1 + y)$ via `TransformedTargetRegressor`, normalizando a assimetria da distribuição e garantindo que o modelo nunca preveja valores negativos.
+- ✅ **Benchmark de Modelos:** Comparação estruturada entre Baseline ingênuo, modelos lineares regularizados (Ridge), ensembles de árvores (Random Forest, HistGradientBoosting) e **Redes Neurais Artificiais (MLP)**.
+- ✅ **Aplicação Web Interativa (Streamlit):** Simulador de preços em tempo real com presets rápidos de veículos, margens de negociação e visualizações diagnósticas.
 
-- **Preço** (variável target)
-- **Marca e modelo** do veículo
-- **Ano de fabricação**
-- **Quilometragem**
-- **Tipo de combustível**
-- **Potência do motor**
-- **Tipo de câmbio**
-- **Outras características técnicas**
+---
 
-## 🛠️ Instalação
+## 🏆 Resultados do Benchmark (Conjunto de Teste Independente)
 
-### 1. Clone o repositório
+Avaliação realizada em **6.000 veículos** do conjunto de teste (amostra representativa da base do eBay):
+
+| Modelo | MAE (€) | RMSE (€) | R² Score | MAPE (%) | Status |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Baseline (Mediana)** | € 4.593,12 | € 8.216,27 | -0.1223 | 146,96% | Referência |
+| **Regressão Ridge** | € 2.280,16 | € 6.709,37 | 0.2516 | 51,87% | Linear |
+| **Random Forest** | € 1.440,99 | € 3.249,81 | 0.8244 | 36,67% | Ensemble |
+| **HistGradientBoosting** | € 1.423,19 | € 3.155,25 | 0.8345 | 35,11% | Boosting |
+| **Rede Neural (MLP Profunda)** | **€ 1.480,95** | **€ 3.141,61** | **0.8359** | **36,23%** | 🥇 **Campeão** |
+
+> **Conclusão Técnica:** A **Rede Neural (Multi-Layer Perceptron)** com regularização L2 e parada antecipada (*Early Stopping*) alcançou o maior poder de explicação de variância (**$R^2 = 0.8359$**) e o menor erro quadrático médio (**RMSE = € 3.141,61**).
+
+---
+
+## 📈 Diagnóstico Visual de Performance
+
+Gráficos comparativos gerados automaticamente durante a avaliação do pipeline:
+
+![Diagnóstico dos Modelos](images/model_comparison.png)
+
+1. **MAE & R²:** Evolução nítida de precisão dos modelos lineares para as abordagens de Deep Learning e Árvores.
+2. **Real vs. Previsto:** Concentração próxima à reta ideal $y = x$, demonstrando excelente aderência dos valores previstos em todas as faixas de preço.
+3. **Distribuição dos Resíduos:** Formato gaussiano simétrico centrado em € 0, sem vícios de subestimação ou superestimação sistemática.
+
+---
+
+## 💻 Aplicação Web Interativa (Streamlit)
+
+O projeto inclui um aplicativo web para simulação de preços em tempo real:
+
 ```bash
-git clone <seu-repositorio>
-cd car-price-prediction
+streamlit run app.py
 ```
 
-### 2. Crie um ambiente virtual (recomendado)
+### Funcionalidades do App:
+- **Simulador Dinâmico:** Ajuste marca, modelo, ano, km, potência, combustível, câmbio e avarias para calcular o preço estimado.
+- **Presets Rápidos:** Carregue veículos clássicos (ex: *VW Golf TDI, BMW 320i, Audi A4, Mercedes-Benz C200*) com um único clique.
+- **Conversão Monetária:** Estimativa em Euros (€) com conversão configurável para Reais (R$).
+- **Faixa de Negociação:** Apresenta a margem de tolerância de mercado baseada no MAE do modelo.
+- **Abas de Benchmark e Insights:** Visualização direta das métricas e das principais conclusões de negócio automotivo.
+
+---
+
+## 🛠️ Instalação e Execução
+
+### 1. Clonar o repositório
 ```bash
-python -m venv venv
+git clone https://github.com/Gads1208/Redes_Neurais.git
+cd Redes_Neurais
+```
+
+### 2. Criar e ativar o ambiente virtual
+```bash
+# Linux / macOS
+python3 -m venv venv
+source venv/bin/activate
 
 # Windows
+python -m venv venv
 venv\Scripts\activate
-
-# Linux/Mac
-source venv/bin/activate
 ```
 
-### 3. Instale as dependências
+### 3. Instalar as dependências
 ```bash
 pip install -r requirements.txt
 ```
 
-## 🚀 Como Usar
-
-### Uso Básico
-
-```python
-from car_price_predictor import CarPricePredictorNN
-
-# Inicializar o preditor
-predictor = CarPricePredictorNN()
-
-# Caminho para seu arquivo CSV
-file_path = "caminho/para/seu/arquivo.csv"
-
-# Pipeline completo
-try:
-    # 1. Carregar e pré-processar dados
-    data = predictor.load_and_preprocess_data(file_path)
-    
-    # 2. Tratar valores ausentes
-    predictor.handle_missing_values()
-    
-    # 3. Preparar features
-    X, y = predictor.prepare_features()
-    
-    # 4. Dividir e normalizar dados
-    X_train, X_val, X_test, y_train, y_val, y_test = predictor.split_and_scale_data(X, y)
-    
-    # 5. Construir modelo (opções: 'simple', 'medium', 'deep')
-    model = predictor.build_model(X_train.shape[1], architecture='medium')
-    
-    # 6. Treinar modelo
-    predictor.train_model(X_train, X_val, y_train, y_val, epochs=100, batch_size=64)
-    
-    # 7. Avaliar modelo com gráficos
-    results = predictor.evaluate_model(X_test, y_test, show_plots=True)
-    
-    # 8. Analisar importância das features
-    predictor.plot_feature_importance_approximation(X_test, y_test)
-    
-    print("✅ Análise completa finalizada!")
-    
-except Exception as e:
-    print(f"❌ Erro: {e}")
-```
-
-### Fazendo Previsões Individuais
-
-```python
-# Após treinar o modelo, você pode fazer previsões individuais
-predicted_price = predictor.predict_price(
-    vehicleType='sedan',
-    yearOfRegistration=2015,
-    gearbox='manual',
-    powerPS=120,
-    model='golf',
-    kilometer=50000,
-    fuelType='petrol',
-    brand='volkswagen'
-)
-
-print(f"Preço previsto: €{predicted_price:,.2f}")
-```
-
-## 📈 Funcionalidades Avançadas
-
-### Arquiteturas Disponíveis
-
-1. **Simple**: Rede neural básica (64→32→1)
-2. **Medium**: Arquitetura balanceada com regularização (256→128→64→32→1)
-3. **Deep**: Rede profunda para dados complexos (512→256→128→64→32→16→1)
-
-### Métricas de Avaliação
-
-- **MAE** (Mean Absolute Error): Erro médio em valor absoluto
-- **MSE** (Mean Squared Error): Erro quadrático médio
-- **RMSE** (Root MSE): Raiz do erro quadrático médio
-- **R²** (Coefficient of Determination): Coeficiente de determinação
-- **MAPE** (Mean Absolute Percentage Error): Erro percentual médio
-
-### Visualizações Geradas
-
-1. 📊 **Evolução da Loss**: Acompanha o treinamento e validação
-2. 🎯 **Real vs Previsto**: Scatter plot para verificar precisão
-3. 📈 **Distribuição dos Resíduos**: Histograma dos erros
-4. 🔍 **Resíduos vs Previsões**: Detecta padrões nos erros
-5. 📐 **Q-Q Plot**: Verifica normalidade dos resíduos
-6. 💰 **MAE por Faixa de Preço**: Performance por quartis
-
-## ⚙️ Configurações Personalizáveis
-
-```python
-# Diferentes configurações de treinamento
-predictor.train_model(
-    X_train, X_val, y_train, y_val,
-    epochs=200,        # Número de épocas
-    batch_size=128     # Tamanho do batch
-)
-
-# Diferentes arquiteturas
-predictor.build_model(input_dim, architecture='deep')
-
-# Configurações de divisão dos dados
-X_train, X_val, X_test, y_train, y_val, y_test = predictor.split_and_scale_data(
-    X, y, 
-    test_size=0.2,    # 20% para teste
-    val_size=0.1      # 10% para validação
-)
-```
-
-## 📋 Estrutura do Projeto
-
-```
-car-price-prediction/
-│
-├── car_price_predictor.py    # Classe principal
-├── requirements.txt          # Dependências
-├── README.md                # Este arquivo
-├── best_model.keras         # Modelo salvo automaticamente
-└── data/
-    └── autos.csv           # Dataset (não incluído)
-```
-
-## 🎓 Conceitos Técnicos Implementados
-
-- **Batch Normalization**: Acelera convergência e estabiliza treinamento
-- **Dropout**: Previne overfitting
-- **Early Stopping**: Para treinamento quando não há melhoria
-- **Learning Rate Scheduling**: Ajusta taxa de aprendizado automaticamente
-- **Huber Loss**: Mais robusta para outliers que MSE
-- **Feature Importance**: Análise por permutação
-- **Validação Cruzada**: Conjunto separado de validação
-
-## 🔧 Troubleshooting
-
-### Problemas Comuns
-
-**1. Erro de importação do TensorFlow**
+### 4. Executar a pipeline de treino e benchmark
 ```bash
-pip install tensorflow --upgrade
+python regressao_precos.py
 ```
 
-**2. Problemas com matplotlib no Windows**
+### 5. Iniciar a aplicação web interativa
 ```bash
-pip install matplotlib --upgrade
+streamlit run app.py
 ```
-
-**3. Dataset não encontrado**
-- Verifique o caminho do arquivo
-- Certifique-se que o arquivo está em formato CSV
-- Verifique a codificação (ISO-8859-1 é padrão)
-
-**4. Memória insuficiente**
-- Reduza o `batch_size`
-- Use arquitetura 'simple'
-- Reduza o número de épocas
-
-## 📊 Requisitos do Sistema
-
-- **Python**: 3.8+
-- **RAM**: 4GB mínimo (8GB recomendado)
-- **Espaço**: 2GB para dependências
-- **GPU**: Opcional (acelera treinamento)
-
-## 🤝 Contribuições
-
-Contribuições são bem-vindas! Por favor:
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para detalhes.
-
-## 👨‍💻 Autor
-
-Desenvolvido com ❤️ para demonstrar aplicações práticas de Deep Learning em problemas reais.
-
-## 📞 Suporte
-
-Se encontrar problemas ou tiver dúvidas:
-
-1. Verifique a seção [Troubleshooting](#-troubleshooting)
-2. Abra uma issue no GitHub
-3. Consulte a documentação das bibliotecas utilizadas
 
 ---
 
-⭐ **Se este projeto foi útil, considere dar uma estrela!** ⭐
+## 🚀 Uso Programático da API
+
+Você pode utilizar a classe `CarPricePredictor` diretamente em outros scripts ou serviços de backend:
+
+```python
+from regressao_precos import CarPricePredictor
+
+# Inicializar o orquestrador
+predictor = CarPricePredictor(use_log_target=True)
+
+# Treinar nos dados
+data = predictor.load_and_preprocess_data("autos.csv", sample_size=30000)
+predictor.prepare_and_split_data(data, test_size=0.2)
+predictor.train_models()
+predictor.evaluate_models()
+
+# Fazer previsão para um veículo específico
+preco_estimado = predictor.predict_price(
+    brand="volkswagen",
+    model="golf",
+    vehicleType="limousine",
+    gearbox="manuell",
+    fuelType="diesel",
+    yearOfRegistration=2012,
+    kilometer=90000,
+    powerPS=140,
+    notRepairedDamage="nein"
+)
+
+print(f"Preço de mercado estimado: €{preco_estimado:,.2f}")
+```
+
+---
+
+## 📂 Estrutura do Projeto
+
+```
+Redes_Neurais/
+│
+├── src/                               # Módulos principais do pipeline
+│   ├── __init__.py                    # Inicialização do pacote
+│   ├── features.py                    # Limpeza de sanidade e engenharia de features
+│   ├── pipeline.py                    # ColumnTransformer e TransformedTargetRegressor
+│   └── models.py                      # Definição dos estimadores e métricas
+│
+├── images/
+│   └── model_comparison.png           # Gráficos diagnósticos do benchmark
+│
+├── models/                            # Modelos treinados serializados (ignorado pelo git)
+│   └── car_price_pipeline.joblib      # Pipeline campeã salva com joblib
+│
+├── app.py                             # Aplicação Web Interativa (Streamlit)
+├── regressao_precos.py                # Script CLI de treino, avaliação e inferência
+├── requirements.txt                   # Dependências do projeto
+├── .gitignore                         # Regras de exclusão do Git (sem .venv nem binários)
+└── README.md                          # Apresentação e documentação do portfólio
+```
+
+---
+
+## 📝 Licença
+
+Este projeto está sob a licença [MIT](LICENSE).
+
+---
+
+⭐ **Desenvolvido para portfólio de Ciência de Dados e Machine Learning.**
