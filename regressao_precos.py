@@ -1,4 +1,5 @@
 # Versão alternativa usando apenas Scikit-learn
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -329,7 +330,8 @@ class CarPricePredictorML:
 if __name__ == "__main__":
     predictor = CarPricePredictorML()
     
-    file_path = r"C:\Users\Pichau\OneDrive\Área de Trabalho\Python\guiads\Redes_Neurais\autos.csv"
+    base_dir = Path(__file__).resolve().parent
+    file_path = base_dir / "autos.csv"
     
     try:
         # Pipeline completo
