@@ -5,6 +5,7 @@ Totalmente livre de Data Leakage, com Engenharia de Features e Transformação L
 
 from pathlib import Path
 from typing import Any, Dict, Optional
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -245,6 +246,26 @@ class CarPricePredictor:
         predicted = self.best_pipeline.predict(input_engineered)[0]
         return float(max(100.0, predicted))
 
+    def save_best_model(self, filepath: str | Path) -> Path:
+        """Salva a pipeline do melhor modelo treinado em disco usando joblib."""
+        if self.best_pipeline is None:
+            raise ValueError("Nenhum modelo foi treinado ou avaliado ainda para salvar.")
+        dest = Path(filepath)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump(self.best_pipeline, dest)
+        print(f"✓ Modelo salvo com sucesso em: {dest}")
+        return dest
+
+    def load_saved_model(self, filepath: str | Path):
+        """Carrega uma pipeline previamente treinada e salva em disco."""
+        path = Path(filepath)
+        if not path.exists():
+            raise FileNotFoundError(f"Arquivo de modelo não encontrado: {path}")
+        self.best_pipeline = joblib.load(path)
+        self.best_model_name = "Rede Neural / Pipeline Otimizada"
+        print(f"✓ Modelo carregado com sucesso de: {path}")
+        return self.best_pipeline
+
 
 # Execução direta de demonstração
 if __name__ == "__main__":
@@ -285,6 +306,10 @@ if __name__ == "__main__":
         # Gerar gráficos diagnósticos
         chart_path = base_dir / "images" / "model_comparison.png"
         predictor.plot_model_comparison(save_path=chart_path)
+
+        # Salvar modelo campeão para uso em produção e no app Streamlit
+        model_save_path = base_dir / "models" / "car_price_pipeline.joblib"
+        predictor.save_best_model(model_save_path)
 
         print("\n🎉 Pipeline executada com sucesso total!")
 
