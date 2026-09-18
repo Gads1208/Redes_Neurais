@@ -1,0 +1,29 @@
+# Controle de versão e ambientes locais
+.git
+.gitignore
+.env
+.venv
+.venv*
+venv/
+env/
+
+# Datasets brutos pesados (não necessários na imagem pois o modelo já está treinado e salvo)
+autos.csv
+autos.xlsx
+
+# Arquivos de cache e temporários
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+.ipynb_checkpoints/
+
+# Configurações de editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos de log
+*.log

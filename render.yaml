@@ -1,0 +1,15 @@
+services:
+  # Aplicação Web Interativa Streamlit (Docker Web Service)
+  - type: web
+    name: car-price-predictor
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: prj-ciencia-de-dados-redes-neurais
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: PYTHONUNBUFFERED
+        value: "1"

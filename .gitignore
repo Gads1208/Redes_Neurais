@@ -76,6 +76,7 @@ ipython_config.py
 *.onnx
 *.pkl
 *.joblib
+!models/car_price_pipeline.joblib
 
 # Redundant datasets or heavy raw files
 autos.xlsx
